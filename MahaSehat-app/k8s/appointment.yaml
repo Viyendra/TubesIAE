@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment
+  template:
+    metadata:
+      labels:
+        app: appointment
+    spec:
+      containers:
+      - name: appointment
+        image: mahasehat-appointment:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: appointment
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002

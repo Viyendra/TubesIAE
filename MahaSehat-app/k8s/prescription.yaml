@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prescription-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prescription
+  template:
+    metadata:
+      labels:
+        app: prescription
+    spec:
+      containers:
+      - name: prescription
+        image: mahasehat-prescription:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prescription-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: prescription
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 3003

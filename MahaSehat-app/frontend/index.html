@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MahaSehat Portal</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .box { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
+        button { cursor: pointer; background: #007bff; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        input { padding: 0.5rem; margin-right: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>🏥 MahaSehat Portal</h1>
+    
+    <div id="login-section" class="box">
+        <h3>Login</h3>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Masuk</button>
+        <p id="login-msg" style="color: red;"></p>
+    </div>
+
+    <div id="dashboard-section" class="hidden">
+        <h3>Selamat Datang, <span id="user-role"></span>!</h3>
+        <button onclick="logout()">Logout</button>
+        <hr>
+
+        <div id="patient-menu" class="hidden">
+            <h4>Daftar Jadwal Dokter</h4>
+            <button onclick="loadAppointments()">Refresh Jadwal</button>
+            <ul id="appt-list"></ul>
+            
+            <h4>Resep Saya</h4>
+            <button onclick="loadMyPrescriptions()">Lihat Resep</button>
+            <ul id="presc-list"></ul>
+        </div>
+
+        <div id="doctor-menu" class="hidden">
+            <h4>Tambah Jadwal Praktik</h4>
+            <input type="date" id="doc-date">
+            <input type="time" id="doc-time">
+            <button onclick="createAppointment()">Buat Jadwal</button>
+            
+            <h4>Tulis Resep</h4>
+            <input type="text" id="presc-patient" placeholder="Nama Pasien">
+            <input type="text" id="presc-medicine" placeholder="Nama Obat">
+            <input type="text" id="presc-dosage" placeholder="Dosis">
+            <button onclick="createPrescription()">Kirim Resep</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8080";
+        let currentUser = null;
+
+        async function login() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            
+            await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: u, password: p, role: u.includes("dokter") ? "dokter" : "pasien" })
+            });
+
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: u, password: p })
+            });
+
+            const data = await res.json();
+            
+            if (data.token) {
+                currentUser = { username: u, role: u.includes("dokter") ? "dokter" : "pasien" };
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                document.getElementById('user-role').innerText = currentUser.username + " (" + currentUser.role + ")";
+                
+                if(currentUser.role === 'dokter') {
+                    document.getElementById('doctor-menu').classList.remove('hidden');
+                } else {
+                    document.getElementById('patient-menu').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('login-msg').innerText = "Login Gagal";
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        async function createAppointment() {
+            const date = document.getElementById('doc-date').value;
+            const time = document.getElementById('doc-time').value;
+            
+            await fetch(`${API_URL}/appointment/create`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ doctorName: currentUser.username, date, time })
+            });
+            alert("Jadwal berhasil dibuat!");
+        }
+
+        async function createPrescription() {
+            const patientName = document.getElementById('presc-patient').value;
+            const medicine = document.getElementById('presc-medicine').value;
+            const dosage = document.getElementById('presc-dosage').value;
+
+            await fetch(`${API_URL}/prescription/add`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ patientName, medicine, dosage, doctorName: currentUser.username })
+            });
+            alert("Resep terkirim!");
+        }
+
+        async function loadAppointments() {
+            const res = await fetch(`${API_URL}/appointment/`);
+            const data = await res.json();
+            const list = document.getElementById('appt-list');
+            list.innerHTML = "";
+            data.forEach(a => {
+                list.innerHTML += `<li>${a.date} jam ${a.time} - Dr. ${a.doctorName} (${a.status})</li>`;
+            });
+        }
+
+        async function loadMyPrescriptions() {
+            const res = await fetch(`${API_URL}/prescription/${currentUser.username}`);
+            const data = await res.json();
+            const list = document.getElementById('presc-list');
+            list.innerHTML = "";
+            if(data.length === 0) list.innerHTML = "<li>Belum ada resep</li>";
+            data.forEach(p => {
+                list.innerHTML += `<li> ${p.medicine} (${p.dosage}) dari Dr. ${p.doctorName}</li>`;
+            });
+        }
+    </script>
+</body>
+</html>
