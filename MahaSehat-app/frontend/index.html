@@ -3,50 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MahaSehat by Viyen</title>
-    
+    <title>MahaSehat Enterprise System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
-        
-        #sidebar-wrapper {
-            min-height: 100vh;
-            margin-left: -15rem;
-            transition: margin .25s ease-out;
-            background-color: #1e293b;
-            color: white;
-        }
+        #sidebar-wrapper { min-height: 100vh; margin-left: -15rem; transition: margin .25s ease-out; background-color: #1e293b; color: white; }
         #sidebar-wrapper .sidebar-heading { padding: 1.5rem; font-size: 1.5rem; font-weight: bold; background: #0f172a; }
-        #sidebar-wrapper .list-group-item {
-            background-color: transparent; border: none; color: #cbd5e1; padding: 1rem 1.5rem;
-        }
+        #sidebar-wrapper .list-group-item { background-color: transparent; border: none; color: #cbd5e1; padding: 1rem 1.5rem; }
         #sidebar-wrapper .list-group-item:hover { background-color: #334155; color: #fff; cursor: pointer; }
         #sidebar-wrapper .list-group-item.active { background-color: #3b82f6; color: white; font-weight: bold; }
-        
         #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
         #page-content-wrapper { width: 100%; }
-
         .stat-card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; }
         .stat-card:hover { transform: translateY(-5px); }
         .icon-box { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; }
-        
-        .appointment-card {
-            background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;
-            border-left: 5px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .appointment-card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; border-left: 5px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .status-booked { border-left-color: #0dcaf0; background: #f0faff; }
         .status-available { border-left-color: #198754; }
         .status-completed { border-left-color: #6c757d; background: #f8f9fa; opacity: 0.8; }
-
         .hidden { display: none !important; }
-        
         .login-container { height: 100vh; display: flex; align-items: center; justify-content: center; background: #eef2f5; }
         .login-box { width: 400px; padding: 40px; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
-
 <body>
 
     <div id="login-section" class="login-container">
@@ -55,7 +35,7 @@
             <h3 class="mb-4">MahaSehat Portal</h3>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="username" placeholder="Username">
-                <label for="username">Username (ex: dokterBudi)</label>
+                <label for="username">Username (Contoh: dokterViyen)</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control" id="password" placeholder="Password">
@@ -99,10 +79,7 @@
                         <div class="col-md-4">
                             <div class="card stat-card p-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-1">Antrian Pasien</h6>
-                                        <h3 class="fw-bold mb-0" id="stat-booked">0</h3>
-                                    </div>
+                                    <div><h6 class="text-muted mb-1">Antrian Pasien</h6><h3 class="fw-bold mb-0" id="stat-booked">0</h3></div>
                                     <div class="icon-box bg-info"><i class="fas fa-user-clock"></i></div>
                                 </div>
                             </div>
@@ -110,10 +87,7 @@
                         <div class="col-md-4">
                             <div class="card stat-card p-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-1">Slot Kosong</h6>
-                                        <h3 class="fw-bold mb-0" id="stat-available">0</h3>
-                                    </div>
+                                    <div><h6 class="text-muted mb-1">Slot Kosong</h6><h3 class="fw-bold mb-0" id="stat-available">0</h3></div>
                                     <div class="icon-box bg-success"><i class="fas fa-check-circle"></i></div>
                                 </div>
                             </div>
@@ -121,10 +95,7 @@
                         <div class="col-md-4">
                             <div class="card stat-card p-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-1">Selesai (Riwayat)</h6>
-                                        <h3 class="fw-bold mb-0" id="stat-completed">0</h3>
-                                    </div>
+                                    <div><h6 class="text-muted mb-1">Jadwal Selesai</h6><h3 class="fw-bold mb-0" id="stat-completed">0</h3></div>
                                     <div class="icon-box bg-secondary"><i class="fas fa-history"></i></div>
                                 </div>
                             </div>
@@ -140,7 +111,6 @@
                                     <input type="time" id="doc-time" class="form-control">
                                     <button onclick="createSchedule()" class="btn btn-primary">Simpan</button>
                                 </div>
-                                <small class="text-muted">Jadwal akan otomatis masuk ke slot "Available".</small>
                             </div>
                         </div>
                         <div class="col-md-7">
@@ -166,7 +136,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="bg-info bg-opacity-10 p-3 rounded">
-                                <h6 class="text-info fw-bold text-uppercase mb-3">⚠️ Pasien Masuk (Booked)</h6>
+                                <h6 class="text-info fw-bold text-uppercase mb-3">⚠️ Pasien Masuk</h6>
                                 <div id="list-booked"></div>
                             </div>
                         </div>
@@ -177,10 +147,11 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="bg-secondary bg-opacity-10 p-3 rounded">
-                                <h6 class="text-secondary fw-bold text-uppercase mb-3">chk️ Riwayat Selesai</h6>
-                                <div id="list-completed"></div>
+                            <div class="bg-secondary bg-opacity-10 p-3 rounded d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-secondary fw-bold text-uppercase mb-0">Riwayat Jadwal</h6>
+                                <button onclick="clearHistory()" class="btn btn-danger btn-sm" style="font-size: 0.7rem;">Hapus Semua</button>
                             </div>
+                            <div id="list-completed"></div>
                         </div>
                     </div>
                 </div>
@@ -227,7 +198,6 @@
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
             const msg = document.getElementById('login-msg');
-            
             msg.innerText = "Sedang memproses...";
             try {
                 const res = await fetch(`${API_URL}/auth/login`, {
@@ -235,14 +205,11 @@
                     body: JSON.stringify({ username: u, password: p })
                 });
                 const data = await res.json();
-                
                 if (!res.ok) { msg.innerText = data.message || "Gagal Login"; return; }
-
                 currentUser = { username: u, role: data.role, token: data.token };
                 
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('wrapper').classList.remove('hidden');
-                
                 document.getElementById('user-name-display').innerText = u;
                 document.getElementById('user-role-display').innerText = data.role.toUpperCase();
                 msg.innerText = "";
@@ -254,7 +221,7 @@
                     document.getElementById('patient-view').classList.remove('hidden');
                     fetchPatientData();
                 }
-            } catch (e) { msg.innerText = "Error: Tidak dapat terhubung ke API Gateway"; }
+            } catch (e) { msg.innerText = "Error: API Gateway Down"; }
         }
 
         function logout() { location.reload(); }
@@ -262,97 +229,81 @@
         async function createSchedule() {
             const d = document.getElementById('doc-date').value;
             const t = document.getElementById('doc-time').value;
-            if(!d || !t) return alert("Harap lengkapi tanggal dan jam");
-            
+            if(!d || !t) return alert("Lengkapi data");
             await fetch(`${API_URL}/appointment/create`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ doctorName: currentUser.username, date: d, time: t })
             });
-            alert("Jadwal Berhasil Dibuat!");
             fetchDoctorData();
         }
 
         async function fetchDoctorData() {
             const res = await fetch(`${API_URL}/appointment/doctor/${currentUser.username}`);
             const data = await res.json();
-
             const bookedEl = document.getElementById('list-booked');
             const availEl = document.getElementById('list-available');
             const complEl = document.getElementById('list-completed');
             
             bookedEl.innerHTML = ""; availEl.innerHTML = ""; complEl.innerHTML = "";
-            
-            let countBooked = 0, countAvail = 0, countComp = 0;
+            let cB = 0, cA = 0, cC = 0;
 
             data.forEach(item => {
-                let cardHTML = `
-                    <div class="appointment-card status-${item.status}">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="mb-1">${item.time}</h5>
-                                <small class="text-muted"><i class="far fa-calendar"></i> ${item.date}</small>
-                            </div>
-                `;
+                let cardHTML = `<div class="appointment-card status-${item.status}"><div class="d-flex justify-content-between"><div><h5 class="mb-1">${item.time}</h5><small class="text-muted">${item.date}</small></div>`;
 
                 if (item.status === 'booked') {
-                    countBooked++;
-                    cardHTML += `<span class="badge bg-info text-dark">BOOKED</span></div>
-                        <div class="mt-2 fw-bold text-primary"><i class="fas fa-user"></i> ${item.patientName}</div>
-                        <button onclick="cancelBooking(${item.id})" class="btn btn-warning btn-sm w-100 mt-2">Batalkan Pasien</button>
-                    </div>`;
+                    cB++;
+                    cardHTML += `<span class="badge bg-info text-dark">BOOKED</span></div><div class="mt-2 fw-bold text-primary"><i class="fas fa-user"></i> ${item.patientName}</div><button onclick="cancelBooking(${item.id})" class="btn btn-warning btn-sm w-100 mt-2">Batal</button></div>`;
                     bookedEl.innerHTML += cardHTML;
-                } 
-                else if (item.status === 'available') {
-                    countAvail++;
-                    cardHTML += `<span class="badge bg-success">OPEN</span></div>
-                        <div class="mt-2 text-muted fst-italic">Menunggu Pasien...</div>
-                        <button onclick="deleteSchedule(${item.id})" class="btn btn-danger btn-sm w-100 mt-2">Hapus Slot</button>
-                    </div>`;
+                } else if (item.status === 'available') {
+                    cA++;
+                    cardHTML += `<span class="badge bg-success">OPEN</span></div><div class="mt-2 text-muted fst-italic">Menunggu...</div><button onclick="deleteSchedule(${item.id})" class="btn btn-danger btn-sm w-100 mt-2">Hapus</button></div>`;
                     availEl.innerHTML += cardHTML;
-                } 
-                else { 
-                    countComp++;
-                    cardHTML += `<span class="badge bg-secondary">DONE</span></div>
-                        <div class="mt-2 text-muted">Pasien: ${item.patientName || '-'}</div>
-                    </div>`;
+                } else {
+                    cC++;
+                    cardHTML += `<span class="badge bg-secondary">DONE</span></div><div class="mt-2 text-muted">Pasien: ${item.patientName || '-'}</div></div>`;
                     complEl.innerHTML += cardHTML;
                 }
             });
-
-            document.getElementById('stat-booked').innerText = countBooked;
-            document.getElementById('stat-available').innerText = countAvail;
-            document.getElementById('stat-completed').innerText = countComp;
+            document.getElementById('stat-booked').innerText = cB;
+            document.getElementById('stat-available').innerText = cA;
+            document.getElementById('stat-completed').innerText = cC;
         }
 
         async function deleteSchedule(id) {
-            if(!confirm("Hapus jadwal ini?")) return;
-            const res = await fetch(`${API_URL}/appointment/delete/${id}`, { method: 'DELETE' });
-            if(res.ok) fetchDoctorData();
+            if(!confirm("Hapus?")) return;
+            await fetch(`${API_URL}/appointment/delete/${id}`, { method: 'DELETE' });
+            fetchDoctorData();
         }
 
         async function cancelBooking(id) {
-            if(!confirm("Batalkan janji temu ini?")) return;
-            const res = await fetch(`${API_URL}/appointment/cancel`, {
+            if(!confirm("Batal?")) return;
+            await fetch(`${API_URL}/appointment/cancel`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ id })
             });
-            if(res.ok) fetchDoctorData();
+            fetchDoctorData();
+        }
+
+        async function clearHistory() {
+            if(!confirm("Yakin ingin menghapus semua jadwal yang sudah selesai?")) return;
+            const res = await fetch(`${API_URL}/appointment/clear-history/${currentUser.username}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            alert(data.message);
+            fetchDoctorData();
         }
 
         async function sendPrescription() {
             const p = document.getElementById('rx-name').value;
             const m = document.getElementById('rx-med').value;
             const d = document.getElementById('rx-dose').value;
-            if(!p || !m) return alert("Lengkapi data resep!");
-
+            if(!p || !m) return alert("Lengkapi resep!");
             await fetch(`${API_URL}/prescription/add`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ patientName: p, medicine: m, dosage: d, doctorName: currentUser.username })
             });
-            alert("Resep berhasil dikirim ke " + p);
-            document.getElementById('rx-name').value = "";
-            document.getElementById('rx-med').value = "";
-            document.getElementById('rx-dose').value = "";
+            alert("Resep Terkirim");
         }
 
         async function fetchPatientData() {
@@ -363,58 +314,30 @@
 
             data.forEach(item => {
                 if(item.status === 'completed') return;
-
-                let actionBtn = "";
-                let statusBadge = "";
-                let borderClass = "";
-
-                if (item.status === 'available') {
-                    actionBtn = `<button onclick="bookSlot(${item.id})" class="btn btn-success btn-sm">Ambil Slot</button>`;
-                    statusBadge = `<span class="badge bg-success">Tersedia</span>`;
-                    borderClass = "border-success";
-                } else if (item.status === 'booked' && item.patientName === currentUser.username) {
-                    actionBtn = `<button onclick="patientCancel(${item.id})" class="btn btn-warning btn-sm text-dark">Batalkan</button>`;
-                    statusBadge = `<span class="badge bg-primary">Milik Anda</span>`;
-                    borderClass = "border-primary";
-                } else {
-                    actionBtn = `<button class="btn btn-secondary btn-sm" disabled>Penuh</button>`;
-                    statusBadge = `<span class="badge bg-secondary">Full</span>`;
-                    borderClass = "border-secondary";
-                }
-
-                el.innerHTML += `
-                    <div class="col-md-6">
-                        <div class="card mb-3 border-top border-4 ${borderClass} shadow-sm">
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="card-title text-primary"><i class="fas fa-user-md"></i> Dr. ${item.doctorName}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted"><i class="far fa-clock"></i> ${item.time} (${item.date})</h6>
-                                    ${statusBadge}
-                                </div>
-                                <div>${actionBtn}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                let actionBtn = item.status === 'available' 
+                    ? `<button onclick="bookSlot(${item.id})" class="btn btn-success btn-sm">Ambil</button>` 
+                    : (item.patientName === currentUser.username ? `<button onclick="patientCancel(${item.id})" class="btn btn-warning btn-sm">Batal</button>` : `<button class="btn btn-secondary btn-sm" disabled>Penuh</button>`);
+                
+                el.innerHTML += `<div class="col-md-6"><div class="card mb-3 border-start border-4 border-${item.status === 'available' ? 'success' : 'primary'} shadow-sm"><div class="card-body d-flex justify-content-between align-items-center"><div><h5 class="card-title text-primary">Dr. ${item.doctorName}</h5><h6 class="card-subtitle text-muted">${item.time} (${item.date})</h6></div><div>${actionBtn}</div></div></div></div>`;
             });
         }
 
         async function bookSlot(id) {
-            if(!confirm("Booking jadwal ini?")) return;
+            if(!confirm("Booking?")) return;
             const res = await fetch(`${API_URL}/appointment/book`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ id, patientName: currentUser.username })
             });
-            if(res.ok) { alert("Berhasil Booking!"); fetchPatientData(); }
+            if(res.ok) { alert("Berhasil!"); fetchPatientData(); }
         }
 
         async function patientCancel(id) {
-            if(!confirm("Batalkan booking anda?")) return;
+            if(!confirm("Batal Booking?")) return;
             const res = await fetch(`${API_URL}/appointment/cancel`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ id })
             });
-            if(res.ok) { alert("Booking Dibatalkan."); fetchPatientData(); }
+            if(res.ok) { alert("Dibatalkan."); fetchPatientData(); }
         }
 
         async function fetchMyPrescriptions() {
@@ -423,17 +346,23 @@
             const el = document.getElementById('patient-rx-list');
             el.innerHTML = "";
             if(data.length === 0) el.innerHTML = "<li class='text-white-50'>Belum ada resep.</li>";
+            
             data.forEach(item => {
+                const dateObj = new Date(item.date);
+                const dateStr = dateObj.toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' });
+                
                 el.innerHTML += `
-                <li class="mb-2 p-2 bg-white bg-opacity-25 rounded">
-                    <strong>💊 ${item.medicine}</strong> <br>
-                    <small>${item.dosage}</small><br>
-                    <small class="fst-italic">Dr. ${item.doctorName}</small>
+                <li class="mb-2 p-2 bg-white bg-opacity-25 rounded border border-light">
+                    <div class="d-flex justify-content-between">
+                        <strong>💊 ${item.medicine}</strong>
+                        <small class="text-white badge bg-dark">${dateStr}</small>
+                    </div>
+                    <small class="d-block">${item.dosage}</small>
+                    <small class="fst-italic text-white-50">Dr. ${item.doctorName}</small>
                 </li>`;
             });
         }
     </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
