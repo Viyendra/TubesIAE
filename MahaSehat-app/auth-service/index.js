@@ -27,14 +27,24 @@ app.post('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (user) {
-        const token = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY);
-        res.json({ token, role: user.role });
-    } else {
-        res.status(401).json({ message: "Login gagal: Username atau Password salah" });
+
+    const user = users.find(u => u.username === username);
+    if (!user) {
+        return res.status(404).json({ 
+            message: "AKSES DIBLOKIR: User tidak ditemukan di sistem kami." 
+        });
     }
+    if (user.password !== password) {
+        return res.status(401).json({ 
+            message: "AKSES DIBLOKIR: Password anda salah." 
+        });
+    }
+    const token = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY);
+    res.json({ 
+        message: "Login Berhasil",
+        token, 
+        role: user.role 
+    });
 });
 
 app.listen(PORT, () => console.log(`Auth Service running on port ${PORT}`));
