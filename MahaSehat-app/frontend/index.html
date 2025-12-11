@@ -5,113 +5,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MahaSehat Portal</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-        .box { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
-        button { cursor: pointer; background: #007bff; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; }
+        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background-color: #f0f2f5; }
+        .box { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h3, h4 { color: #333; margin-top: 0; }
+        button { cursor: pointer; padding: 8px 16px; border: none; border-radius: 4px; background: #007bff; color: white; transition: 0.2s; }
         button:hover { background: #0056b3; }
-        input { padding: 0.5rem; margin-right: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px; margin-bottom: 10px; }
         .hidden { display: none; }
+        
+        ul { list-style: none; padding: 0; }
+        li { background: #f9f9f9; border-bottom: 1px solid #eee; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        li:last-child { border-bottom: none; }
+        
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; color: white; font-weight: bold; }
+        .bg-green { background-color: #28a745; } 
+        .bg-blue { background-color: #17a2b8; }
+        .bg-gray { background-color: #6c757d; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <h1>🏥 MahaSehat Portal</h1>
+    <h1 style="text-align: center;">🏥 MahaSehat Portal</h1>
     
-    <div id="login-section" class="box">
-        <h3>Login</h3>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Masuk</button>
-        <p id="login-msg" style="color: red;"></p>
+    <div id="login-section" class="box" style="text-align: center; max-width: 400px; margin: auto;">
+        <h3>Login Pengguna</h3>
+        <input type="text" id="username" placeholder="Username (ex: dokterBudi, ani)" style="width: 80%;">
+        <input type="password" id="password" placeholder="Password" style="width: 80%;">
+        <br><br>
+        <button onclick="login()">Masuk Sistem</button>
+        <p id="login-msg" style="color: red; margin-top: 10px;"></p>
     </div>
 
     <div id="dashboard-section" class="hidden">
-        <h3>Selamat Datang, <span id="user-role"></span>!</h3>
-        <button onclick="logout()">Logout</button>
-        <hr>
-
-        <div id="patient-menu" class="hidden">
-            <h4>Daftar Jadwal Dokter</h4>
-            <button onclick="loadAppointments()">Refresh Jadwal</button>
-            <ul id="appt-list"></ul>
-            
-            <h4>Resep Saya</h4>
-            <button onclick="loadMyPrescriptions()">Lihat Resep</button>
-            <ul id="presc-list"></ul>
+        <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Halo, <span id="user-role" style="color: #007bff;"></span></h3>
+            <button onclick="logout()" style="background: #dc3545;">Logout</button>
         </div>
 
         <div id="doctor-menu" class="hidden">
-            <h4>Tambah Jadwal Praktik</h4>
-            <input type="date" id="doc-date">
-            <input type="time" id="doc-time">
-            <button onclick="createAppointment()">Buat Jadwal</button>
+            <div class="box">
+                <h4>➕ Buat Jadwal Baru</h4>
+                <input type="date" id="doc-date">
+                <input type="time" id="doc-time">
+                <button onclick="createAppointment()">Simpan Jadwal</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="box">
+                    <h4>📅 Pasien Booked (Akan Datang)</h4>
+                    <button onclick="loadDoctorSchedule()" style="font-size: 0.8rem; margin-bottom: 10px;">Refresh</button>
+                    <ul id="doc-active-list"></ul>
+                </div>
+
+                <div class="box">
+                    <h4>Riwayat Appointment Selesai (Completed)</h4>
+                    <ul id="doc-history-list"></ul>
+                </div>
+            </div>
+
+            <div class="box">
+                <h4>📝 Tulis Resep Obat</h4>
+                <input type="text" id="presc-patient" placeholder="Nama Pasien">
+                <input type="text" id="presc-medicine" placeholder="Nama Obat">
+                <input type="text" id="presc-dosage" placeholder="Dosis">
+                <button onclick="createPrescription()">Kirim Resep</button>
+            </div>
+        </div>
+
+        <div id="patient-menu" class="hidden">
+            <div class="box">
+                <h4>📅 Pilih Jadwal Dokter</h4>
+                <button onclick="loadAppointments()">Refresh Jadwal</button>
+                <ul id="appt-list" style="margin-top: 10px;"></ul>
+            </div>
             
-            <h4>Tulis Resep</h4>
-            <input type="text" id="presc-patient" placeholder="Nama Pasien">
-            <input type="text" id="presc-medicine" placeholder="Nama Obat">
-            <input type="text" id="presc-dosage" placeholder="Dosis">
-            <button onclick="createPrescription()">Kirim Resep</button>
+            <div class="box">
+                <h4>💊 Resep Obat Saya</h4>
+                <button onclick="loadMyPrescriptions()">Lihat Resep</button>
+                <ul id="presc-list" style="margin-top: 10px;"></ul>
+            </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "http://localhost:8080";
+        const API_URL = "http://localhost:8080"; 
         let currentUser = null;
 
         async function login() {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
-            
-            await fetch(`${API_URL}/auth/register`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ username: u, password: p, role: u.includes("dokter") ? "dokter" : "pasien" })
-            });
+            const msgLabel = document.getElementById('login-msg');
+            msgLabel.innerText = "Loading...";
 
-            const res = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ username: u, password: p })
-            });
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: u, password: p })
+                });
 
-            const data = await res.json();
-            
-            if (data.token) {
-                currentUser = { username: u, role: u.includes("dokter") ? "dokter" : "pasien" };
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('user-role').innerText = currentUser.username + " (" + currentUser.role + ")";
-                
-                if(currentUser.role === 'dokter') {
-                    document.getElementById('doctor-menu').classList.remove('hidden');
-                } else {
-                    document.getElementById('patient-menu').classList.remove('hidden');
+                const data = await res.json();
+                if (!res.ok) {
+                    msgLabel.innerText = data.message;
+                    return;
                 }
-            } else {
-                document.getElementById('login-msg').innerText = "Login Gagal";
+
+                if (data.token) {
+                    msgLabel.innerText = "";
+                    currentUser = { username: u, role: data.role, token: data.token };
+                    showDashboard();
+                }
+            } catch (err) {
+                msgLabel.innerText = "Error: API Gateway tidak merespon";
+                console.error(err);
             }
         }
 
-        function logout() {
-            location.reload();
+        function showDashboard() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('user-role').innerText = currentUser.username + " (" + currentUser.role + ")";
+            
+            if(currentUser.role === 'dokter') {
+                document.getElementById('doctor-menu').classList.remove('hidden');
+                loadDoctorSchedule();
+            } else {
+                document.getElementById('patient-menu').classList.remove('hidden');
+                loadAppointments();
+            }
         }
+
+        function logout() { location.reload(); }
 
         async function createAppointment() {
             const date = document.getElementById('doc-date').value;
             const time = document.getElementById('doc-time').value;
-            
+            if(!date || !time) return alert("Lengkapi tanggal dan jam");
+
             await fetch(`${API_URL}/appointment/create`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ doctorName: currentUser.username, date, time })
             });
             alert("Jadwal berhasil dibuat!");
+            loadDoctorSchedule();
+        }
+
+        async function loadDoctorSchedule() {
+            const res = await fetch(`${API_URL}/appointment/doctor/${currentUser.username}`);
+            const data = await res.json();
+
+            const activeList = document.getElementById('doc-active-list');
+            const historyList = document.getElementById('doc-history-list');
+            activeList.innerHTML = "";
+            historyList.innerHTML = "";
+
+            data.forEach(a => {
+                const itemHTML = `
+                    <div>
+                        <strong>${a.date} jam ${a.time}</strong><br>
+                        ${a.patientName ? 'Pasien: ' + a.patientName : 'Menunggu Pasien...'}
+                    </div>
+                    <span class="badge ${getStatusColor(a.status)}">${a.status}</span>
+                `;
+
+                const li = document.createElement('li');
+                li.innerHTML = itemHTML;
+
+                if (a.status === 'completed') {
+                    historyList.appendChild(li);
+                } else {
+                    activeList.appendChild(li);
+                }
+            });
+
+            if(activeList.innerHTML === "") activeList.innerHTML = "<small>Tidak ada jadwal aktif</small>";
+            if(historyList.innerHTML === "") historyList.innerHTML = "<small>Belum ada riwayat</small>";
+        }
+
+        function getStatusColor(status) {
+            if(status === 'available') return 'bg-green';
+            if(status === 'booked') return 'bg-blue';
+            return 'bg-gray';
         }
 
         async function createPrescription() {
             const patientName = document.getElementById('presc-patient').value;
             const medicine = document.getElementById('presc-medicine').value;
             const dosage = document.getElementById('presc-dosage').value;
-
+            
             await fetch(`${API_URL}/prescription/add`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -125,9 +209,37 @@
             const data = await res.json();
             const list = document.getElementById('appt-list');
             list.innerHTML = "";
-            data.forEach(a => {
-                list.innerHTML += `<li>${a.date} jam ${a.time} - Dr. ${a.doctorName} (${a.status})</li>`;
+            
+            const availableSlots = data.filter(a => a.status !== 'completed');
+            
+            if(availableSlots.length === 0) {
+                list.innerHTML = "<li style='text-align:center'>Tidak ada jadwal tersedia</li>"; return;
+            }
+
+            availableSlots.forEach(a => {
+                let btnHtml = "";
+                if(a.status === 'available') {
+                    btnHtml = `<button onclick="bookAppointment(${a.id})" class="bg-green">Ambil</button>`;
+                } else {
+                    btnHtml = `<span style="color:red; font-size:0.8rem;">Sudah dipesan ${a.patientName}</span>`;
+                }
+
+                list.innerHTML += `
+                    <li>
+                        <div>${a.date} jam ${a.time} - Dr. ${a.doctorName}</div>
+                        ${btnHtml}
+                    </li>`;
             });
+        }
+
+        async function bookAppointment(id) {
+            if(!confirm("Booking jadwal ini?")) return;
+            const res = await fetch(`${API_URL}/appointment/book`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id, patientName: currentUser.username })
+            });
+            if(res.ok) { alert("Sukses!"); loadAppointments(); }
         }
 
         async function loadMyPrescriptions() {
@@ -135,9 +247,9 @@
             const data = await res.json();
             const list = document.getElementById('presc-list');
             list.innerHTML = "";
-            if(data.length === 0) list.innerHTML = "<li>Belum ada resep</li>";
+            if(data.length === 0) list.innerHTML = "<li>Tidak ada resep</li>";
             data.forEach(p => {
-                list.innerHTML += `<li> ${p.medicine} (${p.dosage}) dari Dr. ${p.doctorName}</li>`;
+                list.innerHTML += `<li>💊 ${p.medicine} (${p.dosage}) - Dr. ${p.doctorName}</li>`;
             });
         }
     </script>
