@@ -3,88 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MahaSehat Portal</title>
+    <title>MahaSehat by Viyen</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background-color: #f0f2f5; }
-        .box { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1, h3, h4 { color: #333; margin-top: 0; }
-        button { cursor: pointer; padding: 8px 16px; border: none; border-radius: 4px; background: #007bff; color: white; transition: 0.2s; }
-        button:hover { background: #0056b3; }
-        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px; margin-bottom: 10px; }
-        .hidden { display: none; }
+        body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        ul { list-style: none; padding: 0; }
-        li { background: #f9f9f9; border-bottom: 1px solid #eee; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-        li:last-child { border-bottom: none; }
+        #sidebar-wrapper {
+            min-height: 100vh;
+            margin-left: -15rem;
+            transition: margin .25s ease-out;
+            background-color: #1e293b;
+            color: white;
+        }
+        #sidebar-wrapper .sidebar-heading { padding: 1.5rem; font-size: 1.5rem; font-weight: bold; background: #0f172a; }
+        #sidebar-wrapper .list-group-item {
+            background-color: transparent; border: none; color: #cbd5e1; padding: 1rem 1.5rem;
+        }
+        #sidebar-wrapper .list-group-item:hover { background-color: #334155; color: #fff; cursor: pointer; }
+        #sidebar-wrapper .list-group-item.active { background-color: #3b82f6; color: white; font-weight: bold; }
         
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; color: white; font-weight: bold; }
-        .bg-green { background-color: #28a745; } 
-        .bg-blue { background-color: #17a2b8; }
-        .bg-gray { background-color: #6c757d; }
+        #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
+        #page-content-wrapper { width: 100%; }
+
+        .stat-card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .icon-box { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; }
         
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+        .appointment-card {
+            background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;
+            border-left: 5px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .status-booked { border-left-color: #0dcaf0; background: #f0faff; }
+        .status-available { border-left-color: #198754; }
+        .status-completed { border-left-color: #6c757d; background: #f8f9fa; opacity: 0.8; }
+
+        .hidden { display: none !important; }
+        
+        .login-container { height: 100vh; display: flex; align-items: center; justify-content: center; background: #eef2f5; }
+        .login-box { width: 400px; padding: 40px; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
+
 <body>
-    <h1 style="text-align: center;">🏥 MahaSehat Portal</h1>
-    
-    <div id="login-section" class="box" style="text-align: center; max-width: 400px; margin: auto;">
-        <h3>Login Pengguna</h3>
-        <input type="text" id="username" placeholder="Username (Contoh: dokterViyen, budi)" style="width: 80%;">
-        <input type="password" id="password" placeholder="Password" style="width: 80%;">
-        <br><br>
-        <button onclick="login()">Masuk Sistem</button>
-        <p id="login-msg" style="color: red; margin-top: 10px;"></p>
+
+    <div id="login-section" class="login-container">
+        <div class="login-box text-center">
+            <i class="fas fa-heartbeat fa-3x text-primary mb-3"></i>
+            <h3 class="mb-4">MahaSehat Portal</h3>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="username" placeholder="Username">
+                <label for="username">Username (ex: dokterBudi)</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" placeholder="Password">
+                <label for="password">Password</label>
+            </div>
+            <button onclick="login()" class="btn btn-primary w-100 py-2 btn-lg">Masuk</button>
+            <p id="login-msg" class="text-danger mt-3 fw-bold"></p>
+        </div>
     </div>
 
-    <div id="dashboard-section" class="hidden">
-        <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
-            <h3>Halo, <span id="user-role" style="color: #007bff;"></span></h3>
-            <button onclick="logout()" style="background: #dc3545;">Logout</button>
-        </div>
-
-        <div id="doctor-menu" class="hidden">
-            <div class="box">
-                <h4>➕ Buat Jadwal Baru</h4>
-                <input type="date" id="doc-date">
-                <input type="time" id="doc-time">
-                <button onclick="createAppointment()">Simpan Jadwal</button>
-            </div>
-
-            <div class="grid-2">
-                <div class="box">
-                    <h4>📅 Pasien Booked (Akan Datang)</h4>
-                    <button onclick="loadDoctorSchedule()" style="font-size: 0.8rem; margin-bottom: 10px;">Refresh</button>
-                    <ul id="doc-active-list"></ul>
-                </div>
-
-                <div class="box">
-                    <h4>Riwayat Appointment Selesai (Completed)</h4>
-                    <ul id="doc-history-list"></ul>
-                </div>
-            </div>
-
-            <div class="box">
-                <h4>📝 Tulis Resep Obat</h4>
-                <input type="text" id="presc-patient" placeholder="Nama Pasien">
-                <input type="text" id="presc-medicine" placeholder="Nama Obat">
-                <input type="text" id="presc-dosage" placeholder="Dosis">
-                <button onclick="createPrescription()">Kirim Resep</button>
+    <div class="d-flex hidden" id="wrapper">
+        <div class="border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading"><i class="fas fa-clinic-medical me-2"></i> MahaSehat</div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action active"><i class="fas fa-th-large me-2"></i> Dashboard</a>
+                <a onclick="logout()" class="list-group-item list-group-item-action text-danger mt-5"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
             </div>
         </div>
 
-        <div id="patient-menu" class="hidden">
-            <div class="box">
-                <h4>📅 Pilih Jadwal Dokter</h4>
-                <button onclick="loadAppointments()">Refresh Jadwal</button>
-                <ul id="appt-list" style="margin-top: 10px;"></ul>
-            </div>
-            
-            <div class="box">
-                <h4>💊 Resep Obat Saya</h4>
-                <button onclick="loadMyPrescriptions()">Lihat Resep</button>
-                <ul id="presc-list" style="margin-top: 10px;"></ul>
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3">
+                <button class="btn btn-light" id="menu-toggle"><i class="fas fa-bars"></i></button>
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="me-3 text-muted" id="current-time"></span>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" id="user-name-display">User</div>
+                            <small class="text-muted" id="user-role-display">Role</small>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-4">
+
+                <div id="doctor-view" class="hidden">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card stat-card p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Antrian Pasien</h6>
+                                        <h3 class="fw-bold mb-0" id="stat-booked">0</h3>
+                                    </div>
+                                    <div class="icon-box bg-info"><i class="fas fa-user-clock"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stat-card p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Slot Kosong</h6>
+                                        <h3 class="fw-bold mb-0" id="stat-available">0</h3>
+                                    </div>
+                                    <div class="icon-box bg-success"><i class="fas fa-check-circle"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stat-card p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Selesai (Riwayat)</h6>
+                                        <h3 class="fw-bold mb-0" id="stat-completed">0</h3>
+                                    </div>
+                                    <div class="icon-box bg-secondary"><i class="fas fa-history"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-5">
+                            <div class="card p-3 shadow-sm h-100">
+                                <h5 class="mb-3"><i class="fas fa-plus-circle text-primary"></i> Buat Jadwal Praktik</h5>
+                                <div class="input-group mb-2">
+                                    <input type="date" id="doc-date" class="form-control">
+                                    <input type="time" id="doc-time" class="form-control">
+                                    <button onclick="createSchedule()" class="btn btn-primary">Simpan</button>
+                                </div>
+                                <small class="text-muted">Jadwal akan otomatis masuk ke slot "Available".</small>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card p-3 shadow-sm h-100">
+                                <h5 class="mb-3"><i class="fas fa-file-prescription text-success"></i> Tulis Resep</h5>
+                                <div class="row g-2">
+                                    <div class="col-md-4"><input type="text" id="rx-name" class="form-control" placeholder="Nama Pasien"></div>
+                                    <div class="col-md-4"><input type="text" id="rx-med" class="form-control" placeholder="Nama Obat"></div>
+                                    <div class="col-md-4 d-flex">
+                                        <input type="text" id="rx-dose" class="form-control me-2" placeholder="Dosis">
+                                        <button onclick="sendPrescription()" class="btn btn-success"><i class="fas fa-paper-plane"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="fas fa-clipboard-list"></i> Manajemen Jadwal</h4>
+                        <button onclick="fetchDoctorData()" class="btn btn-sm btn-outline-primary"><i class="fas fa-sync"></i> Refresh Data</button>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="bg-info bg-opacity-10 p-3 rounded">
+                                <h6 class="text-info fw-bold text-uppercase mb-3">⚠️ Pasien Masuk (Booked)</h6>
+                                <div id="list-booked"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <h6 class="text-success fw-bold text-uppercase mb-3">✅ Slot Kosong</h6>
+                                <div id="list-available"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-secondary bg-opacity-10 p-3 rounded">
+                                <h6 class="text-secondary fw-bold text-uppercase mb-3">chk️ Riwayat Selesai</h6>
+                                <div id="list-completed"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="patient-view" class="hidden">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card shadow-sm p-4">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h4>📅 Pilih Jadwal Dokter</h4>
+                                    <button onclick="fetchPatientData()" class="btn btn-primary"><i class="fas fa-sync"></i> Refresh</button>
+                                </div>
+                                <div id="patient-appt-list" class="row"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm p-4 text-white bg-primary bg-gradient">
+                                <h4><i class="fas fa-pills"></i> Resep Saya</h4>
+                                <hr>
+                                <button onclick="fetchMyPrescriptions()" class="btn btn-light text-primary btn-sm mb-3 w-100">Cek Kotak Obat</button>
+                                <ul id="patient-rx-list" class="list-unstyled"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -93,165 +215,225 @@
         const API_URL = "http://localhost:8080"; 
         let currentUser = null;
 
+        document.getElementById("menu-toggle").onclick = function() {
+            document.getElementById("wrapper").classList.toggle("toggled");
+        };
+
+        setInterval(() => {
+            document.getElementById('current-time').innerText = new Date().toLocaleTimeString('id-ID');
+        }, 1000);
+
         async function login() {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
-            const msgLabel = document.getElementById('login-msg');
-            msgLabel.innerText = "Loading...";
-
+            const msg = document.getElementById('login-msg');
+            
+            msg.innerText = "Sedang memproses...";
             try {
                 const res = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ username: u, password: p })
                 });
-
                 const data = await res.json();
-                if (!res.ok) {
-                    msgLabel.innerText = data.message;
-                    return;
-                }
+                
+                if (!res.ok) { msg.innerText = data.message || "Gagal Login"; return; }
 
-                if (data.token) {
-                    msgLabel.innerText = "";
-                    currentUser = { username: u, role: data.role, token: data.token };
-                    showDashboard();
-                }
-            } catch (err) {
-                msgLabel.innerText = "Error: API Gateway tidak merespon";
-                console.error(err);
-            }
-        }
+                currentUser = { username: u, role: data.role, token: data.token };
+                
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('wrapper').classList.remove('hidden');
+                
+                document.getElementById('user-name-display').innerText = u;
+                document.getElementById('user-role-display').innerText = data.role.toUpperCase();
+                msg.innerText = "";
 
-        function showDashboard() {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('dashboard-section').classList.remove('hidden');
-            document.getElementById('user-role').innerText = currentUser.username + " (" + currentUser.role + ")";
-            
-            if(currentUser.role === 'dokter') {
-                document.getElementById('doctor-menu').classList.remove('hidden');
-                loadDoctorSchedule();
-            } else {
-                document.getElementById('patient-menu').classList.remove('hidden');
-                loadAppointments();
-            }
+                if (data.role === 'dokter') {
+                    document.getElementById('doctor-view').classList.remove('hidden');
+                    fetchDoctorData();
+                } else {
+                    document.getElementById('patient-view').classList.remove('hidden');
+                    fetchPatientData();
+                }
+            } catch (e) { msg.innerText = "Error: Tidak dapat terhubung ke API Gateway"; }
         }
 
         function logout() { location.reload(); }
 
-        async function createAppointment() {
-            const date = document.getElementById('doc-date').value;
-            const time = document.getElementById('doc-time').value;
-            if(!date || !time) return alert("Lengkapi tanggal dan jam");
-
+        async function createSchedule() {
+            const d = document.getElementById('doc-date').value;
+            const t = document.getElementById('doc-time').value;
+            if(!d || !t) return alert("Harap lengkapi tanggal dan jam");
+            
             await fetch(`${API_URL}/appointment/create`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ doctorName: currentUser.username, date, time })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ doctorName: currentUser.username, date: d, time: t })
             });
-            alert("Jadwal berhasil dibuat!");
-            loadDoctorSchedule();
+            alert("Jadwal Berhasil Dibuat!");
+            fetchDoctorData();
         }
 
-        async function loadDoctorSchedule() {
+        async function fetchDoctorData() {
             const res = await fetch(`${API_URL}/appointment/doctor/${currentUser.username}`);
             const data = await res.json();
 
-            const activeList = document.getElementById('doc-active-list');
-            const historyList = document.getElementById('doc-history-list');
-            activeList.innerHTML = "";
-            historyList.innerHTML = "";
+            const bookedEl = document.getElementById('list-booked');
+            const availEl = document.getElementById('list-available');
+            const complEl = document.getElementById('list-completed');
+            
+            bookedEl.innerHTML = ""; availEl.innerHTML = ""; complEl.innerHTML = "";
+            
+            let countBooked = 0, countAvail = 0, countComp = 0;
 
-            data.forEach(a => {
-                const itemHTML = `
-                    <div>
-                        <strong>${a.date} jam ${a.time}</strong><br>
-                        ${a.patientName ? 'Pasien: ' + a.patientName : 'Menunggu Pasien...'}
-                    </div>
-                    <span class="badge ${getStatusColor(a.status)}">${a.status}</span>
+            data.forEach(item => {
+                let cardHTML = `
+                    <div class="appointment-card status-${item.status}">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="mb-1">${item.time}</h5>
+                                <small class="text-muted"><i class="far fa-calendar"></i> ${item.date}</small>
+                            </div>
                 `;
 
-                const li = document.createElement('li');
-                li.innerHTML = itemHTML;
-
-                if (a.status === 'completed') {
-                    historyList.appendChild(li);
-                } else {
-                    activeList.appendChild(li);
+                if (item.status === 'booked') {
+                    countBooked++;
+                    cardHTML += `<span class="badge bg-info text-dark">BOOKED</span></div>
+                        <div class="mt-2 fw-bold text-primary"><i class="fas fa-user"></i> ${item.patientName}</div>
+                        <button onclick="cancelBooking(${item.id})" class="btn btn-warning btn-sm w-100 mt-2">Batalkan Pasien</button>
+                    </div>`;
+                    bookedEl.innerHTML += cardHTML;
+                } 
+                else if (item.status === 'available') {
+                    countAvail++;
+                    cardHTML += `<span class="badge bg-success">OPEN</span></div>
+                        <div class="mt-2 text-muted fst-italic">Menunggu Pasien...</div>
+                        <button onclick="deleteSchedule(${item.id})" class="btn btn-danger btn-sm w-100 mt-2">Hapus Slot</button>
+                    </div>`;
+                    availEl.innerHTML += cardHTML;
+                } 
+                else { 
+                    countComp++;
+                    cardHTML += `<span class="badge bg-secondary">DONE</span></div>
+                        <div class="mt-2 text-muted">Pasien: ${item.patientName || '-'}</div>
+                    </div>`;
+                    complEl.innerHTML += cardHTML;
                 }
             });
 
-            if(activeList.innerHTML === "") activeList.innerHTML = "<small>Tidak ada jadwal aktif</small>";
-            if(historyList.innerHTML === "") historyList.innerHTML = "<small>Belum ada riwayat</small>";
+            document.getElementById('stat-booked').innerText = countBooked;
+            document.getElementById('stat-available').innerText = countAvail;
+            document.getElementById('stat-completed').innerText = countComp;
         }
 
-        function getStatusColor(status) {
-            if(status === 'available') return 'bg-green';
-            if(status === 'booked') return 'bg-blue';
-            return 'bg-gray';
+        async function deleteSchedule(id) {
+            if(!confirm("Hapus jadwal ini?")) return;
+            const res = await fetch(`${API_URL}/appointment/delete/${id}`, { method: 'DELETE' });
+            if(res.ok) fetchDoctorData();
         }
 
-        async function createPrescription() {
-            const patientName = document.getElementById('presc-patient').value;
-            const medicine = document.getElementById('presc-medicine').value;
-            const dosage = document.getElementById('presc-dosage').value;
-            
-            await fetch(`${API_URL}/prescription/add`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ patientName, medicine, dosage, doctorName: currentUser.username })
+        async function cancelBooking(id) {
+            if(!confirm("Batalkan janji temu ini?")) return;
+            const res = await fetch(`${API_URL}/appointment/cancel`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id })
             });
-            alert("Resep terkirim!");
+            if(res.ok) fetchDoctorData();
         }
 
-        async function loadAppointments() {
+        async function sendPrescription() {
+            const p = document.getElementById('rx-name').value;
+            const m = document.getElementById('rx-med').value;
+            const d = document.getElementById('rx-dose').value;
+            if(!p || !m) return alert("Lengkapi data resep!");
+
+            await fetch(`${API_URL}/prescription/add`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ patientName: p, medicine: m, dosage: d, doctorName: currentUser.username })
+            });
+            alert("Resep berhasil dikirim ke " + p);
+            document.getElementById('rx-name').value = "";
+            document.getElementById('rx-med').value = "";
+            document.getElementById('rx-dose').value = "";
+        }
+
+        async function fetchPatientData() {
             const res = await fetch(`${API_URL}/appointment/`);
             const data = await res.json();
-            const list = document.getElementById('appt-list');
-            list.innerHTML = "";
-            
-            const availableSlots = data.filter(a => a.status !== 'completed');
-            
-            if(availableSlots.length === 0) {
-                list.innerHTML = "<li style='text-align:center'>Tidak ada jadwal tersedia</li>"; return;
-            }
+            const el = document.getElementById('patient-appt-list');
+            el.innerHTML = "";
 
-            availableSlots.forEach(a => {
-                let btnHtml = "";
-                if(a.status === 'available') {
-                    btnHtml = `<button onclick="bookAppointment(${a.id})" class="bg-green">Ambil</button>`;
+            data.forEach(item => {
+                if(item.status === 'completed') return;
+
+                let actionBtn = "";
+                let statusBadge = "";
+                let borderClass = "";
+
+                if (item.status === 'available') {
+                    actionBtn = `<button onclick="bookSlot(${item.id})" class="btn btn-success btn-sm">Ambil Slot</button>`;
+                    statusBadge = `<span class="badge bg-success">Tersedia</span>`;
+                    borderClass = "border-success";
+                } else if (item.status === 'booked' && item.patientName === currentUser.username) {
+                    actionBtn = `<button onclick="patientCancel(${item.id})" class="btn btn-warning btn-sm text-dark">Batalkan</button>`;
+                    statusBadge = `<span class="badge bg-primary">Milik Anda</span>`;
+                    borderClass = "border-primary";
                 } else {
-                    btnHtml = `<span style="color:red; font-size:0.8rem;">Sudah dipesan ${a.patientName}</span>`;
+                    actionBtn = `<button class="btn btn-secondary btn-sm" disabled>Penuh</button>`;
+                    statusBadge = `<span class="badge bg-secondary">Full</span>`;
+                    borderClass = "border-secondary";
                 }
 
-                list.innerHTML += `
-                    <li>
-                        <div>${a.date} jam ${a.time} - Dr. ${a.doctorName}</div>
-                        ${btnHtml}
-                    </li>`;
+                el.innerHTML += `
+                    <div class="col-md-6">
+                        <div class="card mb-3 border-top border-4 ${borderClass} shadow-sm">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title text-primary"><i class="fas fa-user-md"></i> Dr. ${item.doctorName}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"><i class="far fa-clock"></i> ${item.time} (${item.date})</h6>
+                                    ${statusBadge}
+                                </div>
+                                <div>${actionBtn}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        async function bookAppointment(id) {
+        async function bookSlot(id) {
             if(!confirm("Booking jadwal ini?")) return;
             const res = await fetch(`${API_URL}/appointment/book`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ id, patientName: currentUser.username })
             });
-            if(res.ok) { alert("Sukses!"); loadAppointments(); }
+            if(res.ok) { alert("Berhasil Booking!"); fetchPatientData(); }
         }
 
-        async function loadMyPrescriptions() {
+        async function patientCancel(id) {
+            if(!confirm("Batalkan booking anda?")) return;
+            const res = await fetch(`${API_URL}/appointment/cancel`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id })
+            });
+            if(res.ok) { alert("Booking Dibatalkan."); fetchPatientData(); }
+        }
+
+        async function fetchMyPrescriptions() {
             const res = await fetch(`${API_URL}/prescription/${currentUser.username}`);
             const data = await res.json();
-            const list = document.getElementById('presc-list');
-            list.innerHTML = "";
-            if(data.length === 0) list.innerHTML = "<li>Tidak ada resep</li>";
-            data.forEach(p => {
-                list.innerHTML += `<li>💊 ${p.medicine} (${p.dosage}) - Dr. ${p.doctorName}</li>`;
+            const el = document.getElementById('patient-rx-list');
+            el.innerHTML = "";
+            if(data.length === 0) el.innerHTML = "<li class='text-white-50'>Belum ada resep.</li>";
+            data.forEach(item => {
+                el.innerHTML += `
+                <li class="mb-2 p-2 bg-white bg-opacity-25 rounded">
+                    <strong>💊 ${item.medicine}</strong> <br>
+                    <small>${item.dosage}</small><br>
+                    <small class="fst-italic">Dr. ${item.doctorName}</small>
+                </li>`;
             });
         }
     </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
